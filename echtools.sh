@@ -637,9 +637,16 @@ test_best_ip() {
     
     # 应用配置
     BEST_IP="$SELECTED_IP"
+
+# === 新增：DoH 与 ProxyIP 绑定 ===
+    if [[ "$BEST_IP" =~ ^1\.1\.1\.1$ || "$BEST_IP" =~ ^1\.0\.0\.1$ || "$BEST_IP" =~ ^104\. || "$BEST_IP" =~ ^172\.6[4-9]\. || "$BEST_IP" =~ ^172\.7[0-1]\. ]]; then
+    DNS="https://cloudflare-dns.com/dns-query"
+    echo -e "${CYAN}检测到 Cloudflare IP，已自动切换 DoH → Cloudflare${PLAIN}"
+    fi
+
     save_config
     create_service
-    
+
     read -p "是否立即重启服务生效？[y/N]: " restart_now
     if [[ "$restart_now" == "y" || "$restart_now" == "Y" ]]; then
         svc_restart
